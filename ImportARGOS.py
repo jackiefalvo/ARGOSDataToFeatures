@@ -9,8 +9,6 @@
 ## Created: Fall 2020
 ## Author: John.Fay@duke.edu (for ENV859)
 ##---------------------------------------------------------------------
-#%% Set up 
-
 # import modules
 import sys, os, arcpy
 
@@ -32,24 +30,30 @@ while line1997:
     # run these conditions only if the line has "Date :"
     if ("Date :" in line1997): # why the ()?
         
-        # split the line (by default..? tab?)
+        # split the line (it picks up on the split delimeter? is there a default?)
         splitline = line1997.split()
+        #break -- allows us to examine the splitline list
+            # why does this spit out as a list? split function does this?
         
         # grab info (tag ID)
         tagID = splitline[0] # how was I to know what the third thing would be? had to make a for loop to inspect..
+        date = splitline[3]
+        time = splitline[4]
+        LC = splitline[7]
         
         # need to read next line to get lat/lon
         line1997_next = argos1997.readline()
         
         # split this line
         splitline_next = line1997_next.split()
+        #break
         
         # grab lat/long
         lat = splitline_next[2]
         lon = splitline_next[5]
         
         # print test
-        print(f"tag ID = {tagID} located at {lat, lon}")
+        print(f"tag ID = {tagID} located at {lat, lon} \n on {date} at {time} \n Location Class = {LC}")
       
     # update line1997 to progreess while loop    
     line1997 = argos1997.readline()
