@@ -67,9 +67,30 @@ while line1997:
         lat = splitline_next[2]
         lon = splitline_next[5]
         
-        # print test
-        print(f"tag ID = {tagID} located at {lat, lon} \n on {date} at {time} \n Location Class = {LC}")
-      
+        # convert lat/lon from string to float
+        # translate cardinal directions to quadrants
+            # lat: N = + and S = -
+            # lon: E = + and W = -
+        try:
+            
+            if lat[:-1] == 'N':
+                lat_float = float(lat[:-1])
+            else:
+                lat_float = float(lat[:-1]) * -1
+            if lon[:-1] == 'E':
+                lon_float = float(lon[:-1])
+            else:
+                lon_float = float(lon[:-1]) * -1
+                
+            # create point object
+            obsPoint = arcpy.Point()
+            obsPoint.X = lat_float
+            obsPoint.Y = lon_float
+            
+        except Exception as e:
+            print(f"Added error record {tagID} to error bucket")
+        
+        
     # update line1997 to progreess while loop    
     line1997 = argos1997.readline()
     
