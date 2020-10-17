@@ -7,7 +7,7 @@
 ## Usage: ImportArgos <ARGOS folder> <Output feature class> 
 ##
 ## Created: Fall 2020
-## Author: John.Fay@duke.edu (for ENV859)
+## Author: cristiana.falvo@duke.edu (adopted from John Fay's ENV859 course)
 ##---------------------------------------------------------------------
 #%% set up -- import modules, sets envs, set inputs/outputs, create empty fc
 # import modules
