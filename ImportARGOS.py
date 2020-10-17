@@ -19,10 +19,17 @@ arcpy.env.overwriteOutput = True
 # Set input variables (Hard-wired)
 inputFile = "V:\\Part4_ArcPy\\ARGOSTracking\\data\\ARGOSdata\\1997dg.txt"
 outputFC = "V:\Part4_ArcPy\ARGOSTracking\scratch\ARGOStrack.shp"
-outPath, outName = os.path.split(outputFC)
+outputSR = arcpy.SpatialReference(54002) # creates spatial ref obj that refers to 'World Equidistant Cylindrical' 
 
-# create empty feature class, we will add features
-arcpy.management.CreateFeatureclass(outPath, outName)
+# create empty (point) feature class, we will add features
+outPath, outName = os.path.split(outputFC)
+arcpy.management.CreateFeatureclass(outPath, outName, "POINT", '', '', '', outputSR)
+# notice the ind shapefile files in scratch folder now include a .prj file (projection file)
+
+# Add TagID, LC, IQ, and Date fields to the output feature class
+arcpy.AddField_management(outputFC,"TagID","LONG")
+arcpy.AddField_management(outputFC,"LC","TEXT")
+arcpy.AddField_management(outputFC,"Date","DATE")
 
 #%% while loop
 
