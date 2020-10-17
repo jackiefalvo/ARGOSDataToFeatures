@@ -9,27 +9,30 @@
 ## Created: Fall 2020
 ## Author: John.Fay@duke.edu (for ENV859)
 ##---------------------------------------------------------------------
-
+#%% set up -- import modules, sets envs, set inputs/outputs, create empty fc
 # import modules
 import sys, os, arcpy
 
-# allow arcpy to overwritee outputs
+# allow arcpy to overwrite outputs
 arcpy.env.overwriteOutput = True
 
-# Set input variables (Hard-wired)
+# Input data and output FC
 inputFile = "V:\\Part4_ArcPy\\ARGOSTracking\\data\\ARGOSdata\\1997dg.txt"
 outputFC = "V:\Part4_ArcPy\ARGOSTracking\scratch\ARGOStrack.shp"
-outputSR = arcpy.SpatialReference(54002) # creates spatial ref obj that refers to 'World Equidistant Cylindrical' 
 
 # create empty (point) feature class, we will add features
 outPath, outName = os.path.split(outputFC)
+outputSR = arcpy.SpatialReference(54002) # 'World Equidistant Cylindrical' 
 arcpy.management.CreateFeatureclass(outPath, outName, "POINT", '', '', '', outputSR)
 # notice the ind shapefile files in scratch folder now include a .prj file (projection file)
 
-# Add TagID, LC, IQ, and Date fields to the output feature class
+# Add TagID, LC, and Date fields to the output feature class
 arcpy.AddField_management(outputFC,"TagID","LONG")
 arcpy.AddField_management(outputFC,"LC","TEXT")
 arcpy.AddField_management(outputFC,"Date","DATE")
+
+# Create insert cursor (allows me to write to my blank fc)
+cursor_insert = arcpy.da.InsertCursor(outputFC, ['Shape@', 'TagID', 'LC', 'Date']) 
 
 #%% while loop
 
@@ -51,7 +54,7 @@ while line1997:
             # why does this spit out as a list? split function does this?
         
         # grab info (tag ID)
-        tagID = splitline[0] # how was I to know what the third thing would be? had to make a for loop to inspect..
+        tagID = splitline[0] 
         date = splitline[3]
         time = splitline[4]
         LC = splitline[7]
@@ -87,14 +90,20 @@ while line1997:
             obsPoint.X = lat_float
             obsPoint.Y = lon_float
             
-        except Exception as e:
+        except Exception as e: # grabs all error lines (records with lat = '???')
             print(f"Added error record {tagID} to error bucket")
         
+        # use insert cursor to add data to fc
+        feature = cursor_insert.insertRow((obsPoint,tagID,LC,date.replace('.','/') + ' ' + time))
+        # the (()) was to squash a whole line into one argument
         
-    # update line1997 to progreess while loop    
+    # update line1997 to progress while loop    
     line1997 = argos1997.readline()
     
 # close out file
 argos1997.close()
+
+# delete insert cursor
+del cursor_insert
 
     
