@@ -9,12 +9,20 @@
 ## Created: Fall 2020
 ## Author: John.Fay@duke.edu (for ENV859)
 ##---------------------------------------------------------------------
+
 # import modules
 import sys, os, arcpy
 
+# allow arcpy to overwritee outputs
+arcpy.env.overwriteOutput = True
+
 # Set input variables (Hard-wired)
 inputFile = "V:\\Part4_ArcPy\\ARGOSTracking\\data\\ARGOSdata\\1997dg.txt"
-outputFC = "V:/ARGOSTracking/Scratch/ARGOStrack.shp"
+outputFC = "V:\Part4_ArcPy\ARGOSTracking\scratch\ARGOStrack.shp"
+outPath, outName = os.path.split(outputFC)
+
+# create empty feature class, we will add features
+arcpy.management.CreateFeatureclass(outPath, outName)
 
 #%% while loop
 
