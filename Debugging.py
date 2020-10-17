@@ -70,25 +70,51 @@ while line1997:
         lat = splitline_next[2]
         lon = splitline_next[5]
         
-        # convert lat/lon from string to float
-        # translate cardinal directions to quadrants
-            # lat: N = + and S = -
-            # lon: E = + and W = -
         try:
             
             if lat[-1] == 'N':
                 lat = float(lat[:-1])
             else:
-                lat = float(lat[:-1] * -1)
+                lat = float(lat[:-1]) * -1
             if lon[-1] == 'E':
                 lon = float(lon[:-1])
             else:
-                lon = float(lon[:-1] * -1)
+                lon = float(lon[:-1]) * -1
+                
+        except Exception as e: # grabs all error lines (records with lat = '???')
+            print(f"Added error record {tagID} to error bucket")
+            
+        print(lat, lon)
+        break
+        
+        
+        # update line1997 to progress while loop    
+    line1997 = argos1997.readline()
+    
+# close out file
+argos1997.close()
+        
+        
+        # convert lat/lon from string to float
+        # translate cardinal directions to quadrants
+            # lat: N = + and S = -
+            # lon: E = + and W = -
+      #%%
+        try:
+            
+            if lat[:-1] == 'N':
+                lat_float = float(lat[:-1])
+            else:
+                lat_float = float(lat[:-1]) * -1
+            if lon[:-1] == 'E':
+                lon_float = float(lon[:-1])
+            else:
+                lon_float = float(lon[:-1]) * -1
                 
             # create point object
             obsPoint = arcpy.Point()
-            obsPoint.X = lat
-            obsPoint.Y = lon
+            obsPoint.X = lat_float
+            obsPoint.Y = lon_float
             
         except Exception as e: # grabs all error lines (records with lat = '???')
             print(f"Added error record {tagID} to error bucket")
@@ -111,3 +137,8 @@ argos1997.close()
 del cursor_insert
 
     
+#%%
+string = '456Y'
+
+print(string[-1]) # last character
+print(string[:-1]) # everything but the last character
