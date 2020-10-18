@@ -70,36 +70,40 @@ while line1997:
         lat = splitline_next[2]
         lon = splitline_next[5]
         
+        #print(tagID, obs_lat, obs_lon)
+        #break
+        
         # convert lat/lon from string to float
         # translate cardinal directions to quadrants
-            # lat: N = + and S = -
-            # lon: E = + and W = -
         try:
             
             if lat[-1] == 'N':
-                lat = float(lat[:-1])
+                obs_lat = float(lat[:-1])
             else:
-                lat = float(lat[:-1] * -1)
-            if lon[-1] == 'E':
-                lon = float(lon[:-1])
+                obs_lat = float(lat[:-1] * -1)
+            if lon[-1] == 'W':
+                obs_lon = float(lon[:-1] * -1)
             else:
-                lon = float(lon[:-1] * -1)
+                obs_lon = float(lon[:-1])
+                
+            print(tagID, obs_lat, obs_lon)
                 
             # create point object
             obsPoint = arcpy.Point()
-            obsPoint.X = lat
-            obsPoint.Y = lon
+            obsPoint.X = obs_lon
+            obsPoint.Y = obs_lat
+            
+            # convert point to pointGeom
+            inputSR = arcpy.SpatialReference(4326) # specify SR of argos pts (global lat/lon = WGS84)
+            obsPointGeom = arcpy.PointGeometry(obsPoint, inputSR) 
+            
+            # use insert cursor to add data to fc
+            feature = cursor_insert.insertRow((obsPointGeom,tagID,LC,date.replace('.','/') + ' ' + time))
+            # the (()) was to squash a whole line into one argument
             
         except Exception as e: # grabs all error lines (records with lat = '???')
             print(f"Added error record {tagID} to error bucket")
         
-        # convert point to pointGeom
-        inputSR = arcpy.SpatialReference(4326) # specify SR of argos pts (global lat/lon = WGS84)
-        obsPointGeom = arcpy.PointGeometry(obsPoint, inputSR) 
-        
-        # use insert cursor to add data to fc
-        feature = cursor_insert.insertRow((obsPointGeom,tagID,LC,date.replace('.','/') + ' ' + time))
-        # the (()) was to squash a whole line into one argument
         
     # update line1997 to progress while loop    
     line1997 = argos1997.readline()
